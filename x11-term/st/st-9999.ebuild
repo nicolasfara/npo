@@ -5,7 +5,8 @@ EAPI=6
 
 DESCRIPTION="st is a simple terminal implementation for X."
 HOMEPAGE="https://st.suckless.org/"
-SRC_URI="https://dl.suckless.org/st/${P}.tar.gz"
+EGIT_REPO_URI="https://github.com/nicolasfara/st.git"
+inherit git-r3
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -24,19 +25,23 @@ RDEPEND="${DEPEND}
 	x11-proto/xextproto
 	x11-proto/xproto"
 
- src_prepare() {
-	eapply_user
+src_prepare() {
+	default
 
-	sed -e '/^CFLAGS/s:[[:space:]]-O[^[:space:]]*[[:space:]]: :' \
+	sed -i \
+		-e '/^CFLAGS/s:[[:space:]]-Wall[[:space:]]: :' \
+		-e '/^CFLAGS/s:[[:space:]]-O[^[:space:]]*[[:space:]]: :' \
+		-e '/^LDFLAGS/{s:[[:space:]]-s[[:space:]]: :}' \
 		-e '/^X11INC/{s:/usr/X11R6/include:/usr/include/X11:}' \
 		-e "/^X11LIB/{s:/usr/X11R6/lib:/usr/$(get_libdir)/X11:}" \
-		-i config.mk || die
-	sed -e '/@echo/!s:@::' \
+		config.mk || die
+	sed -i \
 		-e '/tic/d' \
-		-i Makefile || die
-	tc-export CC
+		Makefile || die
 
 	restore_config config.h
+
+	tc-export CC
 }
 
 src_install() {
@@ -46,5 +51,4 @@ src_install() {
 
 	make_desktop_entry ${PN} simpleterm utilities-terminal 'System;TerminalEmulator;' ''
 
-	save_config config.h
 }

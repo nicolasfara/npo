@@ -3,7 +3,7 @@
 
 EAPI=6
 
-inherit eutils
+inherit eutils ssl-cert
 DESCRIPTION="Toggl desktop"
 HOMEPAGE="https://toggl.com/"
 SRC_URI="https://github.com/toggl/toggldesktop/archive/v${PV}.tar.gz"
@@ -21,7 +21,6 @@ RDEPEND="${DEPEND}"
 
 
 src_prepare() {
-	#epatch "${FILESDIR}/systemlibs.patch"
 	eapply_user
 	eapply "${FILESDIR}/production.patch"
 }
@@ -37,8 +36,9 @@ src_install () {
 
 	newlib.so src/lib/linux/TogglDesktopLibrary/build/release/libTogglDesktopLibrary.so.1.0.0 libTogglDesktopLibrary.so.1 || die "Lib fail"
 	newlib.so third_party/bugsnag-qt/build/release/libbugsnag-qt.so.1.0.0 libbugsnag-qt.so.1 || die "lib fail"
-
+	newlib.so src/lib/linux/TogglDesktopLibrary/build/release/libssl.so libssl.so.1
 	newlib.so src/lib/linux/TogglDesktopLibrary/build/release/libcrypto.so libcrypto.so.1
+
 	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libcrypto.so.1.1
 	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoCrypto.so.50
 	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoData.so.50
@@ -49,7 +49,10 @@ src_install () {
 	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoNetSSL.so.50
 	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoUtil.so.50
 	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoXML.so.50
-	newlib.so src/lib/linux/TogglDesktopLibrary/build/release/libssl.so libssl.so.1
 	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libssl.so.1.1
 
+}
+
+pkg_postinst() {
+	install_cert src/ssl/cacert
 }

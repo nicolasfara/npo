@@ -27,14 +27,29 @@ src_prepare() {
 }
 
 src_compile() {
-	emake -j1 DESTDIR="${D}" deps || die
-	emake -j1 DESTDIR="${D}" || die
+	emake -j1 deps || die "Failed to compile deps"
+	emake -j1 || die "failed to compile sources"
 }
 
 src_install () {
-	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libTogglDesktopLibrary.so.1
-	dolib.so third_party/bugsnag-qt/build/release/libbugsnag-qt.so.1
-
 	dobin src/ui/linux/TogglDesktop.sh
 	dobin src/ui/linux/TogglDesktop/build/release/TogglDesktop
+
+	newlib.so src/lib/linux/TogglDesktopLibrary/build/release/libTogglDesktopLibrary.so.1.0.0 libTogglDesktopLibrary.so.1 || die "Lib fail"
+	newlib.so third_party/bugsnag-qt/build/release/libbugsnag-qt.so.1.0.0 libbugsnag-qt.so.1 || die "lib fail"
+
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libcrypto.so
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libcrypto.so.1.1
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoCrypto.so.50
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoData.so.50
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoDataSQLite.so.50
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoFoundation.so.50
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoJSON.so.50
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoNet.so.50
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoNetSSL.so.50
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoUtil.so.50
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libPocoXML.so.50
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libssl.so
+	dolib.so src/lib/linux/TogglDesktopLibrary/build/release/libssl.so.1.1
+
 }
